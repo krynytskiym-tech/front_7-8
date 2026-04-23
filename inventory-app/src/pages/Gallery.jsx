@@ -1,46 +1,46 @@
-import React, { useState, useEffect } from "react";
-import { inventoryApi } from "../services/inventoryApi";
-import { useFavorites } from "../hooks/useFavorites";
+import React, { useEffect, useState } from "react";
+import { useInventory } from "../store/InventoryContext";
 import InventoryCard from "../components/gallery/InventoryCard";
-import InventoryQuickView from "../components/gallery/InventoryQuickView"; // Імпорт
+import InventoryQuickView from "../components/gallery/InventoryQuickView";
 
 const Gallery = () => {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedItem, setSelectedItem] = useState(null); // Стан для модалки
-  const { toggleFavorite, isFavorite } = useFavorites();
+  const {
+    inventory,
+    loading,
+    error,
+    refreshInventory,
+    favorites,
+    toggleFavorite,
+  } = useInventory();
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const res = await inventoryApi.getAll();
-        setItems(res.data);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchItems();
+    if (inventory.length === 0) refreshInventory();
   }, []);
+
+  if (loading)
+    return <div style={{ textAlign: "center" }}>Завантаження галереї...</div>; // Стан loading [cite: 160]
+  if (error) return <div style={{ color: "red" }}>{error}</div>; // Стан error [cite: 161]
 
   return (
     <div>
-      <h2>Галерея інвентарю</h2>
+      <h2 style={{ marginBottom: "20px" }}>Склад інвентарю</h2>
+
+      {/* Адаптивна grid-галерея [cite: 139, 157] */}
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-          gap: "25px",
+          gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+          gap: "20px",
         }}
       >
-        {items.map((item) => (
+        {inventory.map((item) => (
           <InventoryCard
             key={item.id}
             item={item}
-            isFavorite={isFavorite(item.id)}
-            onToggleFavorite={toggleFavorite}
-            onClick={() => setSelectedItem(item)} // Відкриваємо по кліку
+            isFavorite={favorites.some((f) => f.id === item.id)}
+            onToggleFavorite={() => toggleFavorite(item)}
+            onClick={() => setSelectedItem(item)} // Модалка Quick View [cite: 141-142]
           />
         ))}
       </div>
