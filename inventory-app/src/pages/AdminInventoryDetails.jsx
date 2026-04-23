@@ -35,13 +35,13 @@ const AdminInventoryDetails = () => {
       >
         ← Назад
       </button>
-      <h2>{item.inventory_name}</h2> [cite: 80]
+      <h2>{item.inventory_name}</h2>
       <p>
         <strong>Опис:</strong> {item.description}
       </p>{" "}
       [cite: 82]
       <div style={{ marginTop: "20px" }}>
-        <strong>Повне зображення:</strong> [cite: 84]
+        <strong>Повне зображення:</strong>
         <br />
         <img
           src={item.photo}

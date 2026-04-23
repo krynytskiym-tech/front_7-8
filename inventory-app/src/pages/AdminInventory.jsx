@@ -3,48 +3,52 @@ import { Routes, Route, Link } from "react-router-dom";
 import { inventoryApi } from "../services/inventoryApi";
 import InventoryTable from "../components/inventory/InventoryTable";
 import AdminInventoryCreate from "./AdminInventoryCreate";
+import AdminInventoryDetails from "./AdminInventoryDetails";
+import AdminInventoryEdit from "./AdminInventoryEdit";
+import ConfirmModal from "../components/inventory/ConfirmModal";
 
 const AdminInventory = () => {
   const [inventory, setInventory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
-  // Функція для отримання списку всього інвентарю через API [cite: 29, 62, 63]
   const fetchInventory = async () => {
     setIsLoading(true);
     try {
       const response = await inventoryApi.getAll();
       setInventory(response.data);
     } catch (error) {
-      console.error("Помилка при завантаженні інвентарю:", error);
+      console.error("Помилка:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Викликаємо завантаження даних при першому рендері компонента [cite: 63]
   useEffect(() => {
     fetchInventory();
   }, []);
 
-  // Функція для видалення позиції [cite: 32, 98, 100]
-  const handleDelete = async (id) => {
-    // Перед видаленням обов'язково показуємо підтвердження
-    if (window.confirm("Ви впевнені, що хочете видалити цю позицію?")) {
-      try {
-        await inventoryApi.delete(id);
-        // Після успішного видалення оновлюємо список у стані
-        setInventory(inventory.filter((item) => item.id !== id));
-      } catch (error) {
-        console.error("Помилка при видаленні:", error);
-        alert("Не вдалося видалити елемент.");
-      }
+  const openDeleteModal = (id) => {
+    setSelectedId(id);
+    setIsModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await inventoryApi.delete(selectedId);
+      setInventory(inventory.filter((item) => item.id !== selectedId));
+    } catch (error) {
+      console.error("Помилка при видаленні:", error);
+    } finally {
+      setIsModalOpen(false);
+      setSelectedId(null);
     }
   };
 
   return (
     <div>
       <Routes>
-        {/* Головний шлях адмінки: список інвентарю [cite: 26, 53] */}
         <Route
           index
           element={
@@ -58,7 +62,6 @@ const AdminInventory = () => {
                 }}
               >
                 <h2>Управління інвентарем</h2>
-                {/* Посилання на сторінку створення [cite: 30, 43] */}
                 <Link
                   to="create"
                   style={{
@@ -73,21 +76,23 @@ const AdminInventory = () => {
                   + Додати позицію
                 </Link>
               </div>
-
-              {/* Таблиця з даними [cite: 38, 54] */}
               <InventoryTable
                 inventory={inventory}
-                onDelete={handleDelete}
+                onDelete={openDeleteModal}
                 isLoading={isLoading}
+              />
+              <ConfirmModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={confirmDelete}
+                message="Ви впевнені, що хочете видалити цей предмет?"
               />
             </>
           }
         />
-
-        {/* Вкладений маршрут для створення нової позиції [cite: 43] */}
         <Route path="create" element={<AdminInventoryCreate />} />
-
-        {/* Тут пізніше можна додати маршрути для Edit та View [cite: 44, 45] */}
+        <Route path="view/:id" element={<AdminInventoryDetails />} />
+        <Route path="edit/:id" element={<AdminInventoryEdit />} />
       </Routes>
     </div>
   );
