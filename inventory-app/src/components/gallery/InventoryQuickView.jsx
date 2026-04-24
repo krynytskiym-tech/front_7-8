@@ -2,7 +2,6 @@ import React from "react";
 
 const InventoryQuickView = ({ item, onClose }) => {
   if (!item) return null;
-
   return (
     <div
       style={{
@@ -15,7 +14,7 @@ const InventoryQuickView = ({ item, onClose }) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        zIndex: 2000,
+        zIndex: 1000,
         padding: "20px",
       }}
     >
@@ -26,13 +25,12 @@ const InventoryQuickView = ({ item, onClose }) => {
           maxWidth: "800px",
           width: "100%",
           display: "flex",
-          flexDirection: window.innerWidth < 600 ? "column" : "row",
           overflow: "hidden",
           position: "relative",
           border: "1px solid #333",
+          color: "white",
         }}
       >
-        {/* Кнопка закриття */}
         <button
           onClick={onClose}
           style={{
@@ -43,30 +41,21 @@ const InventoryQuickView = ({ item, onClose }) => {
             color: "white",
             border: "none",
             borderRadius: "50%",
-            width: "35px",
-            height: "35px",
+            width: "30px",
+            height: "30px",
             cursor: "pointer",
           }}
         >
           ✕
         </button>
-
         <img
           src={item.photo}
-          alt={item.inventory_name}
-          style={{
-            width: window.innerWidth < 600 ? "100%" : "50%",
-            height: "400px",
-            objectFit: "cover",
-          }}
+          style={{ width: "50%", height: "400px", objectFit: "cover" }}
+          alt=""
         />
-
         <div style={{ padding: "30px", flex: 1 }}>
-          <h2 style={{ marginTop: 0, color: "#fff" }}>{item.inventory_name}</h2>
-          <p style={{ color: "#aaa", lineHeight: "1.6" }}>{item.description}</p>
-          <div style={{ marginTop: "20px", fontSize: "14px", color: "#888" }}>
-            ID товару: #{item.id}
-          </div>
+          <h2>{item.inventory_name}</h2>
+          <p style={{ color: "#ccc" }}>{item.description}</p>
         </div>
       </div>
     </div>

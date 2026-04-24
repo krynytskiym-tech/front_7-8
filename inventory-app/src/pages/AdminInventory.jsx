@@ -1,49 +1,25 @@
-import React, { useState, useEffect } from "react";
+// src/pages/AdminInventory.jsx
+import React, { useEffect } from "react";
 import { Routes, Route, Link } from "react-router-dom";
-import { inventoryApi } from "../services/inventoryApi";
+import { useInventory } from "../store/InventoryContext"; // ВИКОРИСТОВУЄМО КОНТЕКСТ
 import InventoryTable from "../components/inventory/InventoryTable";
 import AdminInventoryCreate from "./AdminInventoryCreate";
-import AdminInventoryDetails from "./AdminInventoryDetails";
-import AdminInventoryEdit from "./AdminInventoryEdit";
 import ConfirmModal from "../components/inventory/ConfirmModal";
 
 const AdminInventory = () => {
-  const [inventory, setInventory] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
-
-  const fetchInventory = async () => {
-    setIsLoading(true);
-    try {
-      const response = await inventoryApi.getAll();
-      setInventory(response.data);
-    } catch (error) {
-      console.error("Помилка:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Беремо все з глобального сховища
+  const { inventory, loading, refreshInventory, deleteItem } = useInventory();
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [selectedId, setSelectedId] = React.useState(null);
 
   useEffect(() => {
-    fetchInventory();
+    refreshInventory(); // Завантажуємо актуальні дані при відкритті
   }, []);
 
-  const openDeleteModal = (id) => {
-    setSelectedId(id);
-    setIsModalOpen(true);
-  };
-
   const confirmDelete = async () => {
-    try {
-      await inventoryApi.delete(selectedId);
-      setInventory(inventory.filter((item) => item.id !== selectedId));
-    } catch (error) {
-      console.error("Помилка при видаленні:", error);
-    } finally {
-      setIsModalOpen(false);
-      setSelectedId(null);
-    }
+    await inventoryApi.delete(selectedId);
+    await refreshInventory(); // Оновлюємо глобальний список після видалення
+    setIsModalOpen(false);
   };
 
   return (
@@ -70,29 +46,43 @@ const AdminInventory = () => {
                     padding: "10px 15px",
                     textDecoration: "none",
                     borderRadius: "4px",
-                    fontWeight: "bold",
                   }}
                 >
                   + Додати позицію
                 </Link>
               </div>
-              <InventoryTable
-                inventory={inventory}
-                onDelete={openDeleteModal}
-                isLoading={isLoading}
-              />
+
+              {inventory.length === 0 && !loading ? (
+                <p
+                  style={{
+                    textAlign: "center",
+                    padding: "40px",
+                    color: "#888",
+                  }}
+                >
+                  Інвентар порожній. Додайте нові позиції.
+                </p>
+              ) : (
+                <InventoryTable
+                  inventory={inventory}
+                  onDelete={(id) => {
+                    setSelectedId(id);
+                    setIsModalOpen(true);
+                  }}
+                  isLoading={loading}
+                />
+              )}
+
               <ConfirmModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onConfirm={confirmDelete}
-                message="Ви впевнені, що хочете видалити цей предмет?"
+                message="Видалити цей товар?"
               />
             </>
           }
         />
         <Route path="create" element={<AdminInventoryCreate />} />
-        <Route path="view/:id" element={<AdminInventoryDetails />} />
-        <Route path="edit/:id" element={<AdminInventoryEdit />} />
       </Routes>
     </div>
   );

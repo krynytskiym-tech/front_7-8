@@ -8,16 +8,16 @@ const Favorites = () => {
   if (favorites.length === 0) {
     return (
       <div style={{ textAlign: "center", marginTop: "100px", color: "#888" }}>
-        <h2 style={{ fontSize: "48px", marginBottom: "10px" }}>📦</h2>
-        <h3>Список улюблених порожній</h3>
-        <p>Додайте цікаві товари з головної галереї.</p>
+        <h2 style={{ fontSize: "48px" }}>📦</h2>
+        <h3>У ваших улюблених ще нічого немає</h3>
+        <p>Додайте товари з головної сторінки.</p>
       </div>
     );
   }
 
   return (
     <div>
-      <h2 style={{ marginBottom: "30px" }}>Ваші улюблені товари</h2>
+      <h2 style={{ marginBottom: "30px" }}>Ваші улюблені</h2>
       <div
         style={{
           display: "grid",

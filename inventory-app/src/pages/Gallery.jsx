@@ -4,34 +4,29 @@ import InventoryCard from "../components/gallery/InventoryCard";
 import InventoryQuickView from "../components/gallery/InventoryQuickView";
 
 const Gallery = () => {
-  const {
-    inventory,
-    loading,
-    error,
-    refreshInventory,
-    favorites,
-    toggleFavorite,
-  } = useInventory();
+  const { inventory, loading, refreshInventory, favorites, toggleFavorite } =
+    useInventory();
   const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
-    if (inventory.length === 0) refreshInventory();
+    refreshInventory();
   }, []);
 
   if (loading)
-    return <div style={{ textAlign: "center" }}>Завантаження галереї...</div>; // Стан loading [cite: 160]
-  if (error) return <div style={{ color: "red" }}>{error}</div>; // Стан error [cite: 161]
+    return (
+      <div style={{ textAlign: "center", padding: "50px" }}>
+        Завантаження...
+      </div>
+    );
 
   return (
-    <div>
-      <h2 style={{ marginBottom: "20px" }}>Склад інвентарю</h2>
-
-      {/* Адаптивна grid-галерея [cite: 139, 157] */}
+    <div style={{ width: "100%" }}>
+      <h2 style={{ marginBottom: "20px" }}>Галерея інвентарю</h2>
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-          gap: "20px",
+          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+          gap: "25px",
         }}
       >
         {inventory.map((item) => (
@@ -40,11 +35,10 @@ const Gallery = () => {
             item={item}
             isFavorite={favorites.some((f) => f.id === item.id)}
             onToggleFavorite={() => toggleFavorite(item)}
-            onClick={() => setSelectedItem(item)} // Модалка Quick View [cite: 141-142]
+            onClick={() => setSelectedItem(item)}
           />
         ))}
       </div>
-
       <InventoryQuickView
         item={selectedItem}
         onClose={() => setSelectedItem(null)}

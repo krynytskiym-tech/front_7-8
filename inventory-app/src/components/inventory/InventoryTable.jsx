@@ -71,13 +71,12 @@ const InventoryTable = ({ inventory, onDelete, isLoading }) => {
                   Редагувати
                 </Link>
                 <button
-                  onClick={() => onDelete(item.id)}
+                  onClick={() => onDelete(item.id)} // Перевір цей рядок
                   style={{
                     backgroundColor: "#f44336",
                     color: "white",
                     border: "none",
                     padding: "5px 10px",
-                    borderRadius: "4px",
                     cursor: "pointer",
                   }}
                 >

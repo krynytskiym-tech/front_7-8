@@ -10,7 +10,7 @@ const InventoryCard = ({ item, isFavorite, onToggleFavorite, onClick }) => {
         overflow: "hidden",
         backgroundColor: "#1a1a1a",
         cursor: "pointer",
-        transition: "transform 0.2s, box-shadow 0.2s",
+        transition: "all 0.3s ease",
         position: "relative",
       }}
       onMouseEnter={(e) => {
@@ -34,7 +34,7 @@ const InventoryCard = ({ item, isFavorite, onToggleFavorite, onClick }) => {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            onToggleFavorite(item);
+            onToggleFavorite();
           }}
           style={{
             backgroundColor: isFavorite ? "#ff4081" : "#333",
@@ -43,8 +43,6 @@ const InventoryCard = ({ item, isFavorite, onToggleFavorite, onClick }) => {
             padding: "8px 12px",
             borderRadius: "20px",
             cursor: "pointer",
-            fontSize: "12px",
-            transition: "background-color 0.3s",
           }}
         >
           {isFavorite ? "❤️ Улюблений" : "🤍 В улюблені"}

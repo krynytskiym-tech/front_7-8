@@ -1,30 +1,29 @@
-import React, { useState } from "react";
+// src/pages/AdminInventoryCreate.jsx
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { inventoryApi } from "../services/inventoryApi";
+import { useInventory } from "../store/InventoryContext"; // Додай цей імпорт
 import InventoryForm from "../components/inventory/InventoryForm";
 
 const AdminInventoryCreate = () => {
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { refreshInventory } = useInventory(); // Беремо функцію оновлення
 
   const handleCreate = async (formData) => {
-    setIsSubmitting(true);
     try {
       await inventoryApi.create(formData);
-      alert("Позицію успішно створено!");
+      await refreshInventory(); // ОНОВЛЮЄМО СПИСОК У КОНТЕКСТІ
+      alert("Товар додано!");
       navigate("/admin"); // Повертаємось до списку
-    } catch (error) {
-      console.error("Помилка при створенні:", error);
-      alert("Не вдалося створити позицію.");
-    } finally {
-      setIsSubmitting(false);
+    } catch (e) {
+      alert("Помилка при створенні");
     }
   };
 
   return (
     <div>
       <h3>Додати нову позицію</h3>
-      <InventoryForm onSubmit={handleCreate} isSubmitting={isSubmitting} />
+      <InventoryForm onSubmit={handleCreate} />
     </div>
   );
 };
