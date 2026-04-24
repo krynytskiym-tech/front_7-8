@@ -1,15 +1,16 @@
 import React from "react";
-import { useFavorites } from "../hooks/useFavorites";
+import { useInventory } from "../store/InventoryContext";
 import InventoryCard from "../components/gallery/InventoryCard";
 
 const Favorites = () => {
-  const { favorites, toggleFavorite, isFavorite } = useFavorites();
+  const { favorites, toggleFavorite } = useInventory();
 
   if (favorites.length === 0) {
     return (
-      <div style={{ textAlign: "center", marginTop: "50px" }}>
-        <h2>Список улюблених порожній</h2>
-        <p>Додайте щось із галереї, щоб побачити це тут.</p>
+      <div style={{ textAlign: "center", marginTop: "100px", color: "#888" }}>
+        <h2 style={{ fontSize: "48px", marginBottom: "10px" }}>📦</h2>
+        <h3>Список улюблених порожній</h3>
+        <p>Додайте цікаві товари з головної галереї.</p>
       </div>
     );
   }
@@ -28,8 +29,8 @@ const Favorites = () => {
           <InventoryCard
             key={item.id}
             item={item}
-            isFavorite={isFavorite(item.id)}
-            onToggleFavorite={toggleFavorite}
+            isFavorite={true}
+            onToggleFavorite={() => toggleFavorite(item)}
             onClick={() => {}}
           />
         ))}
